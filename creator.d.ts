@@ -21,6 +21,8 @@ declare namespace cc {
 	@param subst JavaScript objects with which to replace substitution strings within msg. This gives you additional control over the format of the output. 
 	*/
 	export function error(msg: any, ...subst: any[]): void;	
+
+		
 	/**
 	!#en
 	Outputs a warning message to the Cocos Creator Console (editor) or Web Console (runtime).
@@ -2449,6 +2451,13 @@ declare namespace cc {
 		/** Constant for default projection of cc.Director, default projection is 2D projection */
 		static PROJECTION_DEFAULT: number;	
 	}	
+
+	export enum CountComponentType {
+	    CHILDREN,
+	    PARENTS,
+	    BOTH
+	}
+
 	/** !#en
 	Class of all entities in Cocos Creator scenes.<br/>
 	For events supported by Node, please refer to {{#crossLink "Node.EventType"}}{{/crossLink}}
@@ -2456,6 +2465,7 @@ declare namespace cc {
 	Cocos Creator 场景中的所有节点类。<br/>
 	支持的节点事件，请参阅 {{#crossLink "Node.EventType"}}{{/crossLink}}。 */
 	export class Node extends _BaseNode {		
+
 		/** !#en
 		Group index of node.<br/>
 		Which Group this node belongs to will resolve that this node's collision components can collide with which other collision componentns.<br/>
@@ -3305,6 +3315,7 @@ declare namespace cc {
 		获取更改透明度时是否修改RGB值。 
 		*/
 		isOpacityModifyRGB(): boolean;	
+
 	}	
 	/** !#en An object to boot the game.
 	!#zh 包含游戏主体信息并负责驱动游戏的游戏对象。 */
@@ -8643,6 +8654,15 @@ declare namespace cc {
 	<br/>
 	注意：不允许使用组件的子类构造参数，因为组件是由引擎创建的。 */
 	export class Component extends Object {		
+
+		findComponent<T extends Component>(type: {prototype: T} | string): T
+		getNonNullComponent<T extends Component>(type: {prototype: T} | string): T
+		countComponent<T extends Component>(type: {prototype: T} | string, count_type: CountComponentType): number
+		getRootNode(): Node;
+		getPossibleComponent<T extends Component>(...types: { prototype: T }[] | string[]);
+		getComponentInParents<T extends Component>(type: { prototype: T } | string): T;
+		log(...params: any[]): void;
+			
 		/** !#en The node this component is attached to. A component is always attached to a node.
 		!#zh 该组件被附加到的节点。组件总会附加到一个节点。 */
 		node: Node;		
@@ -11956,6 +11976,15 @@ declare namespace cc {
 	- define machanisms for Enity Component Systems
 	- define prefab and serialize functions */
 	export class _BaseNode extends Object implements EventTarget {		
+
+		findComponent<T extends Component>(type: {prototype: T} | string): T
+		getNonNullComponent<T extends Component>(type: {prototype: T} | string): T
+		countComponent<T extends Component>(type: {prototype: T} | string, count_type: CountComponentType): number
+		getRootNode(): Node;
+		getPossibleComponent<T extends Component>(...types: { prototype: T }[] | string[]);
+		getComponentInParents<T extends Component>(type: { prototype: T } | string): T;
+		log(...params: any[]): void;
+			
 		/** !#en Name of node.
 		!#zh 该节点名称。 */
 		name: string;		
@@ -32244,4 +32273,5 @@ declare namespace jsb{
          */
         export function getWritablePath ():string;
     }
+	
 }
