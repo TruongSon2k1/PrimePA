@@ -8,6 +8,9 @@ declare namespace cc {
 	Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
 	If you post a bug to forum, please attach this flag. */
 	export var ENGINE_VERSION: string;	
+	export declare type ClassType<T> = {prototype: T};
+	export declare type ConstructorType<T = {}> = new(...args: any[]) => T;
+
 	/**
 	!#en
 	Outputs an error message to the Cocos Creator Console (editor) or Web Console (runtime).<br/>
@@ -22,6 +25,9 @@ declare namespace cc {
 	*/
 	export function error(msg: any, ...subst: any[]): void;	
 
+
+
+	export function instance<T>(obj: ClassType<T>): T | null;
 		
 	/**
 	!#en
@@ -3521,6 +3527,7 @@ declare namespace cc {
 		@param node The node to be checked 
 		*/
 		isPersistRootNode(node: Node): boolean;	
+
 	}	
 	/** !#en
 	Class of private entities in Cocos Creator scenes.<br/>
@@ -7961,6 +7968,7 @@ declare namespace cc {
 		!#zh 冒泡阶段， 包括回程遇到到层次根节点的任何后续节点。 */
 		static BUBBLING_PHASE: number;	
 	}	
+
 	/** !#en
 	The System event, it currently supports keyboard events and accelerometer events.<br>
 	You can get the SystemEvent instance with cc.systemEvent.<br>
@@ -8655,13 +8663,14 @@ declare namespace cc {
 	注意：不允许使用组件的子类构造参数，因为组件是由引擎创建的。 */
 	export class Component extends Object {		
 
-		findComponent<T extends Component>(type: {prototype: T} | string): T
-		getNonNullComponent<T extends Component>(type: {prototype: T} | string): T
-		countComponent<T extends Component>(type: {prototype: T} | string, count_type: CountComponentType): number
+		findComponent<T extends Component>(type: ClassType<T> | string): T
+		getNonNullComponent<T extends Component>(type: ClassType<T> | string): T
+		countComponent<T extends Component>(type: ClassType<T> | string, count_type: CountComponentType): number
 		getRootNode(): Node;
-		getPossibleComponent<T extends Component>(...types: { prototype: T }[] | string[]);
-		getComponentInParents<T extends Component>(type: { prototype: T } | string): T;
+		getPossibleComponent<T extends Component>(...types: ClassType<T>[] | string[]);
+		getComponentInParents<T extends Component>(type: ClassType<T> | string): T;
 		log(...params: any[]): void;
+		onChange(): void;
 			
 		/** !#en The node this component is attached to. A component is always attached to a node.
 		!#zh 该组件被附加到的节点。组件总会附加到一个节点。 */
@@ -8794,7 +8803,7 @@ declare namespace cc {
 		var test = node.getComponent("Test");
 		``` 
 		*/
-		getComponent<T extends Component>(type: {prototype: T}): T;
+		getComponent<T extends Component>(type: ClassType<T>): T;
 		getComponent(className: string): any;		
 		/**
 		!#en Returns all components of supplied Type in the node.
@@ -8807,7 +8816,7 @@ declare namespace cc {
 		var tests = node.getComponents("Test");
 		``` 
 		*/
-		getComponents<T extends Component>(type: {prototype: T}): T[];
+		getComponents<T extends Component>(type: ClassType<T>): T[];
 		getComponents(className: string): any[];		
 		/**
 		!#en Returns the component of supplied type in any of its children using depth first search.
@@ -8820,7 +8829,7 @@ declare namespace cc {
 		var Test = node.getComponentInChildren("Test");
 		``` 
 		*/
-		getComponentInChildren<T extends Component>(type: {prototype: T}): T;
+		getComponentInChildren<T extends Component>(type: ClassType<T>): T;
 		getComponentInChildren(className: string): any;		
 		/**
 		!#en Returns the components of supplied type in self or any of its children using depth first search.
@@ -8833,7 +8842,7 @@ declare namespace cc {
 		var tests = node.getComponentsInChildren("Test");
 		``` 
 		*/
-		getComponentsInChildren<T extends Component>(type: {prototype: T}): T[];
+		getComponentsInChildren<T extends Component>(type: ClassType<T>): T[];
 		getComponentsInChildren(className: string): any[];		
 		/**
 		!#en
@@ -11977,12 +11986,12 @@ declare namespace cc {
 	- define prefab and serialize functions */
 	export class _BaseNode extends Object implements EventTarget {		
 
-		findComponent<T extends Component>(type: {prototype: T} | string): T
-		getNonNullComponent<T extends Component>(type: {prototype: T} | string): T
-		countComponent<T extends Component>(type: {prototype: T} | string, count_type: CountComponentType): number
+		findComponent<T extends Component>(type: ClassType<T> | string): T
+		getNonNullComponent<T extends Component>(type: ClassType<T> | string): T
+		countComponent<T extends Component>(type: ClassType<T> | string, count_type: CountComponentType): number
 		getRootNode(): Node;
-		getPossibleComponent<T extends Component>(...types: { prototype: T }[] | string[]);
-		getComponentInParents<T extends Component>(type: { prototype: T } | string): T;
+		getPossibleComponent<T extends Component>(...types: ClassType<T>[] | string[]);
+		getComponentInParents<T extends Component>(type: ClassType<T> | string): T;
 		log(...params: any[]): void;
 			
 		/** !#en Name of node.
@@ -12215,7 +12224,7 @@ declare namespace cc {
 		var test = node.getComponent("Test");
 		``` 
 		*/
-		getComponent<T extends Component>(type: {prototype: T}): T;
+		getComponent<T extends Component>(type: ClassType<T>): T;
 		getComponent(className: string): any;		
 		/**
 		!#en Returns all components of supplied type in the node.
@@ -12228,7 +12237,7 @@ declare namespace cc {
 		var tests = node.getComponents("Test");
 		``` 
 		*/
-		getComponents<T extends Component>(type: {prototype: T}): T[];
+		getComponents<T extends Component>(type: ClassType<T>): T[];
 		getComponents(className: string): any[];		
 		/**
 		!#en Returns the component of supplied type in any of its children using depth first search.
@@ -12241,7 +12250,7 @@ declare namespace cc {
 		var Test = node.getComponentInChildren("Test");
 		``` 
 		*/
-		getComponentInChildren<T extends Component>(type: {prototype: T}): T;
+		getComponentInChildren<T extends Component>(type: ClassType<T>): T;
 		getComponentInChildren(className: string): any;		
 		/**
 		!#en Returns all components of supplied type in self or any of its children.
@@ -12254,7 +12263,7 @@ declare namespace cc {
 		var tests = node.getComponentsInChildren("Test");
 		``` 
 		*/
-		getComponentsInChildren<T extends Component>(type: {prototype: T}): T[];
+		getComponentsInChildren<T extends Component>(type: ClassType<T>): T[];
 		getComponentsInChildren(className: string): any[];		
 		/**
 		!#en Adds a component class to the node. You can also add component to node by passing in the name of the script.
@@ -20938,12 +20947,12 @@ declare namespace cc.AssetManager {
 		bundle2.load('imgs/cocos', cc.SpriteFrame, null, (err, spriteFrame) => console.log(err));
 		``` 
 		*/
-		load<T extends cc.Asset>(paths: string, type: { prototype: T } onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: T) => void): void;
-		load<T extends cc.Asset>(paths: string[], type: { prototype: T }, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
+		load<T extends cc.Asset>(paths: string, type: ClassType<T>, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: T) => void): void;
+		load<T extends cc.Asset>(paths: string[], type: ClassType<T>, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
 		load<T extends cc.Asset>(paths: string, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: T) => void): void;
 		load<T extends cc.Asset>(paths: string[], onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
-		load<T extends cc.Asset>(paths: string, type: { prototype: T }, onComplete?: (error: Error, assets: T) => void): void;
-		load<T extends cc.Asset>(paths: string[], type: { prototype: T }, onComplete?: (error: Error, assets: Array<T>) => void): void;
+		load<T extends cc.Asset>(paths: string, type: ClassType<T>, onComplete?: (error: Error, assets: T) => void): void;
+		load<T extends cc.Asset>(paths: string[], type: ClassType<T>, onComplete?: (error: Error, assets: Array<T>) => void): void;
 		load<T extends cc.Asset>(paths: string, onComplete?: (error: Error, assets: T) => void): void;
 		load<T extends cc.Asset>(paths: string[], onComplete?: (error: Error, assets: Array<T>) => void): void;		
 		/**
@@ -21017,10 +21026,10 @@ declare namespace cc.AssetManager {
 		bundle2.loadDir('skills', cc.SpriteFrame, null, (err, spriteFrames) => console.log(err));
 		``` 
 		*/
-		loadDir<T extends cc.Asset>(dir: string, type: { prototype: T }, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
+		loadDir<T extends cc.Asset>(dir: string, type: ClassType<T>, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
 		loadDir<T extends cc.Asset>(dir: string, onProgress: (finish: number, total: number, item: RequestItem) => void, onComplete: (error: Error, assets: Array<T>) => void): void;
-		loadDir<T extends cc.Asset>(dir: string, type: { prototype: T }, onComplete: (error: Error, assets: Array<T>) => void): void;
-		loadDir<T extends cc.Asset>(dir: string, type: { prototype: T }): void;
+		loadDir<T extends cc.Asset>(dir: string, type: ClassType<T>, onComplete: (error: Error, assets: Array<T>) => void): void;
+		loadDir<T extends cc.Asset>(dir: string, type: ClassType<T>): void;
 		loadDir<T extends cc.Asset>(dir: string, onComplete: (error: Error, assets: Array<T>) => void): void;
 		loadDir<T extends cc.Asset>(dir: string): void;		
 		/**
@@ -21126,7 +21135,7 @@ declare namespace cc.AssetManager {
 		bundle1.get('music/hit', cc.AudioClip);
 		``` 
 		*/
-		get<T extends cc.Asset> (path: string, type?: { prototype: T }): T;		
+		get<T extends cc.Asset> (path: string, type?: ClassType<T>): T;		
 		/**
 		!#en
 		Release the asset loaded by {{#crossLink "Bundle/load:method"}}{{/crossLink}} or {{#crossLink "Bundle/loadDir:method"}}{{/crossLink}} and it's dependencies.
@@ -22176,6 +22185,29 @@ declare namespace cc.geomUtils {
 !#zh 一些 JavaScript 装饰器，目前可以通过 "cc._decorator" 来访问。
 （这些 API 仍不完全稳定，有可能随着 JavaScript 装饰器的标准实现而调整） */
 declare namespace cc._decorator {	
+	 
+	/**
+	@description
+	@param name The class name used for serialization.
+	
+	@example 
+	```js
+	const {mark_singleton} = cc._decorator;
+	
+	@mark_singleton
+	export class SingletonScript {
+	    // ...
+	}
+	
+	SingletonScript['__pts_instance__']() 					//< Get the singleton instance
+	Instance(SingletonScript) 											//< Better way	
+
+	``` 
+	*/
+	export function mark_singleton<T extends ConstructorType>(constructor: T): T;
+	export function readonly(target: any, key: string, descrptor: PropertyDescriptor): PropertyDescriptor;
+	export function force_override(target: any, key: string, descriptor: PropertyDescriptor): PropertyDescriptor;
+
 	/**
 	!#en
 	Declare the standard [ES6 Class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
@@ -22499,9 +22531,32 @@ declare namespace cc._decorator {
 	export function mixins(ctor: Function, ...rest: Function[]): Function;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//# NAMESPACE cc.pTS
+//
+//# MODDED START
+
+
+declare namespace cc.pTS {
+	export interface Common {
+		 is_boolean(object: any): object is boolean;
+	}
+	export const common: Common;
+}
+
+
+
+
+//# MODDED END
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 /** !#en This module provides some JavaScript utilities. All members can be accessed with `cc.js`.
 !#zh 这个模块封装了 JavaScript 相关的一些实用函数，你可以通过 `cc.js` 来访问这个模块。 */
 declare namespace cc.js {	
+
 	/**
 	Check the obj whether is number or not
 	If a number is created by using 'new Number(10086)', the typeof it will be "object"...
@@ -32275,3 +32330,13 @@ declare namespace jsb{
     }
 	
 }
+
+declare namespace X
+{
+	export interface XTest {
+		test(): void
+	}
+
+	export var test: XTest;
+}
+

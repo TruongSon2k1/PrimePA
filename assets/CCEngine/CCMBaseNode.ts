@@ -8,8 +8,7 @@ enum CountComponentType {
 //@ts-ignore
 cc.CountComponentType = module.exports = CountComponentType;
 
-//@ts-ignore
-cc._BaseNode.prototype.getNonNullComponent = function<T extends cc.Component>(type: {prototype: T} | string)
+cc._BaseNode.prototype.getNonNullComponent = function<T extends cc.Component>(type: cc.ClassType<T> | string)
 {
     var comp = this.getComponent(type);    
     if(!comp) comp = this.addComponent(type);
@@ -17,8 +16,7 @@ cc._BaseNode.prototype.getNonNullComponent = function<T extends cc.Component>(ty
     return comp;
 }
 
-//@ts-ignore
-cc._BaseNode.prototype.countComponent = function<T extends cc.Component>(type: {prototype: T} | string, count_type: CountComponentType = CountComponentType.CHILDREN)
+cc._BaseNode.prototype.countComponent = function<T extends cc.Component>(type: cc.ClassType<T> | string, count_type: CountComponentType = CountComponentType.CHILDREN)
 {
     let num: number = 0;
 
@@ -43,15 +41,13 @@ cc._BaseNode.prototype.countComponent = function<T extends cc.Component>(type: {
     return num;
 }
 
-//@ts-ignore
 cc._BaseNode.prototype.getRootNode = function() {
     const parent = this._parent;
     if(!!this._parent && !(this._parent instanceof cc.Scene) ) return parent.getRootNode();
     return this;
 }
 
-//@ts-ignore
-cc._BaseNode.prototype.getPossibleComponent = function<T extends cc.Component>(...types: { prototype: T }[] | string[])
+cc._BaseNode.prototype.getPossibleComponent = function<T extends cc.Component>(...types: cc.ClassType<T>[] | string[])
 {
     for(const ret of types) {
         const comp = this.getComponent(ret);
@@ -61,8 +57,7 @@ cc._BaseNode.prototype.getPossibleComponent = function<T extends cc.Component>(.
     return null;
 }
 
-//@ts-ignore
-cc._BaseNode.prototype.getComponentInParents = function<T extends cc.Component>(type: { prototype: T } | string)
+cc._BaseNode.prototype.getComponentInParents = function<T extends cc.Component>(type: cc.ClassType<T> | string)
 {
     let comp: T = null;
     let parent = this._parent;
@@ -74,15 +69,13 @@ cc._BaseNode.prototype.getComponentInParents = function<T extends cc.Component>(
     return comp;
 }
 
-//@ts-ignore
 cc._BaseNode.prototype.log = function(...params: any[])
 {
-    if(CC_EDITOR) Editor.log(`[${this._name}] Log: `, params, '');
-    console.log(`[${this._name}] Log: `, params);
+    if(CC_EDITOR) Editor.log(`[${this._name}] Log: `, ...params, '');
+    console.log(`[${this._name}] Log: `, ...params);
 }
 
-//@ts-ignore
-cc._BaseNode.prototype.findComponent = function<T extends cc.Component>(type: {prototype: T} | string)
+cc._BaseNode.prototype.findComponent = function<T extends cc.Component>(type: cc.ClassType<T> | string)
 {
     return this.getRootNode().getComponentInChildren(type);
 }

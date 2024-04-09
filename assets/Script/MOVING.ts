@@ -1,3 +1,5 @@
+import {LMAO} from "./ENABLE";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -8,6 +10,8 @@ export default class MOVING extends cc.Component {
 
     protected onLoad(): void {
         cc.game.setFrameRate(this.fps)
+        console.log(this)
+        cc.instance(LMAO).logger()
     }
 
 }
