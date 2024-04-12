@@ -1,6 +1,11 @@
 {
   "collision-matrix": [
     [
+      true,
+      null,
+      null,
+      true,
+      true,
       true
     ],
     [
@@ -11,13 +16,40 @@
       false,
       false,
       false
+    ],
+    [
+      true,
+      false,
+      false,
+      true,
+      null,
+      true
+    ],
+    [
+      true,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    [
+      true,
+      false,
+      false,
+      true,
+      true,
+      false
     ]
   ],
   "excluded-modules": [],
   "group-list": [
     "default",
     "ui",
-    "NONE"
+    "NONE",
+    "jumper",
+    "ground",
+    "wall"
   ],
   "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
   "design-resolution-width": 720,

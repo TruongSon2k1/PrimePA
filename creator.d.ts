@@ -11988,7 +11988,7 @@ declare namespace cc {
 
 		findComponent<T extends Component>(type: ClassType<T> | string): T
 		getNonNullComponent<T extends Component>(type: ClassType<T> | string): T
-		countComponent<T extends Component>(type: ClassType<T> | string, count_type: CountComponentType): number
+		countComponent<T extends Component>(type: ClassType<T> | string, count_type: CountComponentType = CountComponentType.CHILDREN): number
 		getRootNode(): Node;
 		getPossibleComponent<T extends Component>(...types: ClassType<T>[] | string[]);
 		getComponentInParents<T extends Component>(type: ClassType<T> | string): T;
@@ -22532,30 +22532,15 @@ declare namespace cc._decorator {
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//# NAMESPACE cc.pTS
-//
-//# MODDED START
 
-
-declare namespace cc.pTS {
-	export interface Common {
-		 is_boolean(object: any): object is boolean;
-	}
-	export const common: Common;
-}
-
-
-
-
-//# MODDED END
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** !#en This module provides some JavaScript utilities. All members can be accessed with `cc.js`.
 !#zh 这个模块封装了 JavaScript 相关的一些实用函数，你可以通过 `cc.js` 来访问这个模块。 */
 declare namespace cc.js {	
+
+	export function isObject(obj: any): obj is object;
+	export function isBoolean(obj: any): obj is boolean;
+	export function getTemplateType<T>(ctor: ConstructorType<T>): "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function";
 
 	/**
 	Check the obj whether is number or not
@@ -22563,14 +22548,14 @@ declare namespace cc.js {
 	Then you can use this function if you care about this case.
 	@param obj obj 
 	*/
-	export function isNumber(obj: any): boolean;	
+	export function isNumber(obj: any): obj is number;	
 	/**
 	Check the obj whether is string or not.
 	If a string is created by using 'new String("blabla")', the typeof it will be "object"...
 	Then you can use this function if you care about this case.
 	@param obj obj 
 	*/
-	export function isString(obj: any): boolean;	
+	export function isString(obj: any): obj is string;	
 	/**
 	Copy all properties not defined in obj from arguments[1...n]
 	@param obj object to extend its properties
@@ -32331,12 +32316,83 @@ declare namespace jsb{
 	
 }
 
-declare namespace X
-{
-	export interface XTest {
-		test(): void
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//# NAMESPACE cc.pTS
+//
+//# MODDED START
+
+
+declare namespace pTS {
+
+	declare type AssertMode = 'crash' | 'break' | 'warn'
+	declare type UtilsCompasor<T> = (input: T, index_data: T) => boolean;
+	declare type UtilsCompasors<T> = (checker: T[], index_data: T) => boolean;
+
+	export const default_utils_compasor: UtilsCompasor<T>;// = (input: T, index_data: T) => { return input === index_data };
+
+	export interface IAssertOptions
+	{
+		mode?: AssertMode;
+		message?: string;
 	}
 
-	export var test: XTest;
+	export const default_assert_option: Readonly<IAssertOptions>;
+
+	export interface IConsole
+	{
+		assert_is_true(cond: unknown, option: IAssertOptions = default_assert_option): asserts cond
+		assert_null<T>(cond: T, option: IAssertOptions = default_assert_option): asserts cond is NonNullable<T>
+		asserts_null(option: IAssertOptions, ...cond: any[]): void;
+		assert_array_index<T>(array: T[], index: number, option: IAssertOptions = default_assert_option): void
+		asserts_array_index(array: any[], option: IAssertOptions, ...index: number[]): void
+	}
+
+	export interface INumeric
+	{
+		TINY: number;
+		MAXI: number;
+
+		to_number(target: boolean | string): number;
+		random_int(min: number, max: number): number;
+		random(min: number, max: number): number;
+
+		uuid_num(): number;
+
+		float_rounding(num: number, rounding_num: number = 2): string
+	}
+	
+	export interface IString
+	{
+		uuid(prefix: string = "", suffix: string = ""): string
+		readble_time(): string;
+		smart_number(num: number): string;
+	}
+
+	export interface IUtils
+	{
+		methods_as_string<T>(clasz: ClassType<T>): string[];
+		shift<T>(array: T[], first: number, second: number, ref?: T[], option: IAssertOptions = default_assert_option): T[]
+		filter_string_without_text(target: string[], text: string[]): string[]
+		filter_string_by_text(text: string, arr: string[]): string[]
+		filter_must_contain<T>(sample: T, arr_target: T[], compasor?: UtilsCompasor<T>): T[]
+		find_arr_containing_element<T>(samples: T[], arr_target: T[], compasor: UtilsCompasor<T> = (input: T, idt: T) => input === idt): T[]
+		all_arr_must_contain_element<T>(samples: T[], arr_target: T[], compasor: UtilsCompasors<T> = (checker: T, idt: T) => checker.includes(idt)): boolean
+		is_deep_contain<T, K>(checker: K, target: T[], property: string): boolean
+		clone<T>(target: T, ...binding: any[]): T
+	}
+
+
+	export const constant: Readonly< {aliases_tag: symbol | string, class_name_tag: string, class_id_tag: string} >;
+	export const console: Readonly<IConsole>;
+	export const numeric: Readonly<INumeric>;
+	export const string: Readonly<IString>;
+	export const utils: Readonly<IUtils>
 }
 
+
+
+
+//# MODDED END
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
